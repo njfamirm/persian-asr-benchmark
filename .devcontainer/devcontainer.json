@@ -13,7 +13,8 @@
 				"ms-vscode-remote.remote-containers",
 				"ms-python.python",
 				"esbenp.prettier-vscode",
-				"christian-kohler.path-intellisense"
+				"christian-kohler.path-intellisense",
+				"redhat.vscode-yaml"
 			]
 		}
 	}
