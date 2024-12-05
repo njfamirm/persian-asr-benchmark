@@ -1,0 +1,1 @@
+# [m3hrdadfi/wav2vec2-large-xlsr-persian-v3](https://huggingface.co/m3hrdadfi/wav2vec2-large-xlsr-persian-v3)
