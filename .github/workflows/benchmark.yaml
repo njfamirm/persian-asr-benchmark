@@ -13,7 +13,6 @@ jobs:
       matrix:
         include:
           - path: wav2vec2-large-xlsr-persian-v3
-            model_cache_folder: ~/.cache/huggingface
 
     steps:
     - name: Checkout repository
@@ -37,24 +36,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r ${{ matrix.path }}/requirements.txt
 
-    - name: Cache apt packages
-      uses: actions/cache@v4
-      with:
-        path: /var/cache/apt
-        key: ${{ runner.os }}-apt-${{ hashFiles('**/apt.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-apt-
-
     - name: Install ffmpeg
       run: sudo apt-get install -y ffmpeg
-
-    - name: Cache model
-      uses: actions/cache@v4
-      with:
-        path: ${{ matrix.model_cache_folder }}
-        key: ${{ runner.os }}-model-${{ matrix.path }}
-        restore-keys: |
-          ${{ runner.os }}-model-
       
     - name: Run Python script
       run: |
