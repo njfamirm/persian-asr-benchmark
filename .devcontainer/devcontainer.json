@@ -1,0 +1,21 @@
+{
+	"name": "text-to-speech",
+	"build": {
+		"dockerfile": "./Dockerfile"
+	},
+	"postCreateCommand": "pip3 install --no-cache-dir -r requirements.txt",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"ms-azuretools.vscode-docker",
+				"streetsidesoftware.code-spell-checker",
+				"ms-vscode-remote.remote-containers",
+				"ms-python.python",
+				"esbenp.prettier-vscode",
+				"christian-kohler.path-intellisense"
+			]
+		}
+	}
+}
