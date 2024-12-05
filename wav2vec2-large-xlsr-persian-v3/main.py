@@ -11,7 +11,7 @@ processor = Wav2Vec2Processor.from_pretrained(model_name)
 model = Wav2Vec2ForCTC.from_pretrained(model_name).to(device)
 
 # Load an audio file
-speech_array, sampling_rate = torchaudio.load('../assets/audio-01.mp3')
+speech_array, sampling_rate = torchaudio.load('../assets/audio-01.wav')
 speech_array = speech_array.squeeze().numpy()
 
 # Prepare the features for the model
