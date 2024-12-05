@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "ms-vscode-remote.remote-containers",
+    "github.copilot",
+    "github.copilot-chat",
+    "christian-kohler.path-intellisense",
+    "redhat.vscode-yaml"
+  ]
+}
