@@ -32,3 +32,8 @@ transcription = processor.decode(pred_ids[0])
 
 # Print the transcription
 print('Transcription:', transcription)
+
+# write transcription into file:
+with open('transcription/audio-01.txt', 'w') as f:
+    f.write(transcription)
+    f.close()
