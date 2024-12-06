@@ -1,6 +1,7 @@
 import torch
 import torchaudio
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+from jiwer import wer
 
 # Set the device to GPU if available, otherwise use CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -33,7 +34,11 @@ transcription = processor.decode(pred_ids[0])
 # Print the transcription
 print('Transcription:', transcription)
 
-# write transcription into file:
-with open('transcription/audio-01.txt', 'w') as f:
-    f.write(transcription)
-    f.close()
+# Calculate the Word Error Rate (WER)
+ground_truth_path='../assets/audio-01.txt'
+with open(ground_truth_path, 'r') as file:
+    ground_truth = file.read()
+    file.close()
+
+wer_score = wer(ground_truth, transcription)
+print('WER:', wer_score)
