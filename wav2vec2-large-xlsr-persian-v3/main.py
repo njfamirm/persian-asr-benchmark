@@ -1,44 +1,28 @@
-import torch
-import torchaudio
-from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
-from jiwer import wer
+from predict import load_model, predict
+from metrics import calculate_wer
+from normalizer import normalizer
 
-# Set the device to GPU if available, otherwise use CPU
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+processor, model = load_model()
 
-# Load the model and processor
-model_name = 'm3hrdadfi/wav2vec2-large-xlsr-persian-v3'
-processor = Wav2Vec2Processor.from_pretrained(model_name)
-model = Wav2Vec2ForCTC.from_pretrained(model_name).to(device)
+audio_path = '../assets/audio-01.wav'
+ground_truth_path = '../assets/audio-01.txt'
 
-# Load an audio file
-speech_array, sampling_rate = torchaudio.load('../assets/audio-01.wav')
-speech_array = speech_array.squeeze().numpy()
-
-# Prepare the features for the model
-features = processor(
-    speech_array, 
-    sampling_rate=sampling_rate, 
-    return_tensors='pt', 
-    padding=True
-)
-input_values = features.input_values.to(device)
-attention_mask = features.attention_mask.to(device)
-
-# Predict the transcription of the audio file
-with torch.no_grad():
-    logits = model(input_values, attention_mask=attention_mask).logits
-pred_ids = torch.argmax(logits, dim=-1)
-transcription = processor.decode(pred_ids[0])
-
-# Print the transcription
-print('Transcription:', transcription)
-
-# Calculate the Word Error Rate (WER)
-ground_truth_path='../assets/audio-01.txt'
+# Read the ground truth text
 with open(ground_truth_path, 'r') as file:
     ground_truth = file.read()
-    file.close()
 
-wer_score = wer(ground_truth, transcription)
-print('WER:', wer_score)
+transcription = predict(processor, model, audio_path)
+
+# Calculate WER before normalizing
+wer_score_before = calculate_wer(ground_truth, transcription)
+
+# Normalize the transcription
+normalized_transcription = normalizer({"sentence": transcription})["sentence"]
+
+# Calculate WER after normalizing
+wer_score_after = calculate_wer(ground_truth, normalized_transcription)
+
+print('Transcription:', transcription)
+print('WER before normalization:', wer_score_before)
+print('Normalized Transcription:', normalized_transcription)
+print('WER after normalization:', wer_score_after)
