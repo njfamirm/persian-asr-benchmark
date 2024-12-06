@@ -1,3 +1,6 @@
+import sys
+import json
+from io import StringIO
 from predict import load_model, predict
 from metrics import calculate_wer
 from normalizer import normalizer
@@ -22,7 +25,19 @@ normalized_transcription = normalizer({"sentence": transcription})["sentence"]
 # Calculate WER after normalizing
 wer_score_after = calculate_wer(ground_truth, normalized_transcription)
 
-print('Transcription:', transcription)
-print('WER before normalization:', wer_score_before)
-print('Normalized Transcription:', normalized_transcription)
-print('WER after normalization:', wer_score_after)
+output_data = {
+    'transcription': transcription,
+    'werBeforeNormalization': wer_score_before,
+    'normalizedTranscription': normalized_transcription,
+    'werAfterNormalization': wer_score_after
+}
+
+# Write JSON output to a file
+with open('result.json', 'w', encoding='utf-8') as f:
+    json.dump(output_data, f, ensure_ascii=False, indent=4)
+
+# Read and print the JSON output
+with open('result.json', 'r', encoding='utf-8') as f:
+    json_output = f.read()
+
+print(json_output)

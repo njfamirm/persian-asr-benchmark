@@ -27,19 +27,29 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/setup.py') }}
         restore-keys: |
           ${{ runner.os }}-pip-
 
-    - name: Install dependencies
+    - name: Install dependencies and ffmpeg
       run: |
+        sudo apt-get install -y ffmpeg &
         python -m pip install --upgrade pip
         pip install -r ${{ matrix.path }}/requirements.txt
+        wait
 
-    - name: Install ffmpeg
-      run: sudo apt-get install -y ffmpeg
-      
-    - name: Run Python script
+    - name: Run Python script to transcript and generate report
+      id: benchmark_run
       run: |
         cd ${{ matrix.path }}
         python main.py
+    
+    - name: Generate comment
+      run: |
+        cd ${{ matrix.path }}
+        report=$(cat result.json | jq -r '[.transcription, .werBeforeNormalization, .normalizedTranscription, .werAfterNormalization] | @csv')
+
+        echo "## ASR Benchmark Report for ${{ matrix.path }}" >> $GITHUB_STEP_SUMMARY
+        echo "| Transcription | WER Before Normalization | Normalized Transcription | WER After Normalization |" >> $GITHUB_STEP_SUMMARY
+        echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+        echo "$report" | awk -F, '{print "| " $1 " | " $2 " | " $3 " | " $4 " |"}' >> $GITHUB_STEP_SUMMARY
