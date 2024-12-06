@@ -4,3 +4,5 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y ffmpeg && \
     rm -rf /var/lib/apt/lists/*
+
+RUN python -m pip install --upgrade pip pipreqs
