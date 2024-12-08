@@ -2,9 +2,14 @@
 
 name: Run ASR model benchmark
 
-on: 
-  - push
-  - pull_request
+on:
+  workflow_dispatch:
+
+  pull_request:
+
+  push:
+    branches:
+      - next
 
 jobs:
   benchmark:
