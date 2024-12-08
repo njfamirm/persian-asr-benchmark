@@ -1,0 +1,2 @@
+torch==2.5.1
+nemo_toolkit==2.0.0

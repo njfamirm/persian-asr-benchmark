@@ -1,0 +1,1 @@
+# [nvidia/stt_fa_fastconformer_hybrid_large](https://huggingface.co/nvidia/stt_fa_fastconformer_hybrid_large)
