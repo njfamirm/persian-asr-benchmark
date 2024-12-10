@@ -35,4 +35,16 @@ audio_input, sample_rate = sf.read(audio_file_path)
 
 # Process the audio input
 result = pipe(audio_input)
-print(result["text"])
+transcription = result["text"]
+print(transcription)
+
+# Save the transcription result to a JSON file
+output = {
+    "transcription": transcription,
+    # Placeholder values for WER calculations
+    "werBeforeNormalization": None,
+    "normalizedTranscription": None,
+    "werAfterNormalization": None
+}
+with open("result.json", "w") as f:
+    json.dump(output, f, ensure_ascii=False, indent=4)
