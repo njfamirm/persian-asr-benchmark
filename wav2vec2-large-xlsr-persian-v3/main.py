@@ -1,43 +1,38 @@
 import sys
 import json
+import torch
 from io import StringIO
-from predict import load_model, predict
+from datasets import load_dataset
 from metrics import calculate_wer
 from normalizer import normalizer
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
+import soundfile as sf  # Add this import to read audio files
 
-processor, model = load_model()
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
 
-audio_path = '../assets/audio-01.wav'
-ground_truth_path = '../assets/audio-01.txt'
+model_id = "openai/whisper-large-v3-turbo"
 
-# Read the ground truth text
-with open(ground_truth_path, 'r') as file:
-    ground_truth = file.read()
+model = AutoModelForSpeechSeq2Seq.from_pretrained(
+    model_id, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
+)
+model.to(device)
 
-transcription = predict(processor, model, audio_path)
+processor = AutoProcessor.from_pretrained(model_id)
 
-# Calculate WER before normalizing
-wer_score_before = calculate_wer(ground_truth, transcription)
+pipe = pipeline(
+    "automatic-speech-recognition",
+    model=model,
+    tokenizer=processor.tokenizer,
+    feature_extractor=processor.feature_extractor,
+    torch_dtype=torch_dtype,
+    device=device,
+)
 
-# Normalize the transcription
-normalized_transcription = normalizer({"sentence": transcription})["sentence"]
+# Load the audio file provided as a command-line argument
+audio_file_path = sys.argv[1]
+audio_input, sample_rate = sf.read(audio_file_path)
 
-# Calculate WER after normalizing
-wer_score_after = calculate_wer(ground_truth, normalized_transcription)
-
-output_data = {
-    'transcription': transcription,
-    'werBeforeNormalization': wer_score_before,
-    'normalizedTranscription': normalized_transcription,
-    'werAfterNormalization': wer_score_after
-}
-
-# Write JSON output to a file
-with open('result.json', 'w', encoding='utf-8') as f:
-    json.dump(output_data, f, ensure_ascii=False, indent=4)
-
-# Read and print the JSON output
-with open('result.json', 'r', encoding='utf-8') as f:
-    json_output = f.read()
-
-print(json_output)
+# Process the audio input
+result = pipe(audio_input)
+print(result["text"])
