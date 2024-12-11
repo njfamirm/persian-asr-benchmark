@@ -18,9 +18,9 @@ def predict(processor, model, audio_path):
 
     # Process the audio
     features = processor(
-        speech_array, 
-        sampling_rate=sampling_rate, 
-        return_tensors='pt', 
+        speech_array,
+        sampling_rate=sampling_rate,
+        return_tensors='pt',
         padding=True
     )
 

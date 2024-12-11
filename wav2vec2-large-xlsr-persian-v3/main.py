@@ -1,50 +1,43 @@
 import sys
 import json
-import torch
 from io import StringIO
-from datasets import load_dataset
+from predict import load_model, predict
 from metrics import calculate_wer
 from normalizer import normalizer
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
-import soundfile as sf  # Add this import to read audio files
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
-torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+processor, model = load_model()
 
-model_id = "openai/whisper-large-v3-turbo"
+audio_path = '../assets/audio-01.wav'
+ground_truth_path = '../assets/audio-01.txt'
 
-model = AutoModelForSpeechSeq2Seq.from_pretrained(
-    model_id, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
-)
-model.to(device)
+# Read the ground truth text
+with open(ground_truth_path, 'r') as file:
+    ground_truth = file.read()
 
-processor = AutoProcessor.from_pretrained(model_id)
+transcription = predict(processor, model, audio_path)
 
-pipe = pipeline(
-    "automatic-speech-recognition",
-    model=model,
-    tokenizer=processor.tokenizer,
-    feature_extractor=processor.feature_extractor,
-    torch_dtype=torch_dtype,
-    device=device,
-)
+# Calculate WER before normalizing
+wer_score_before = calculate_wer(ground_truth, transcription)
 
-# Load the audio file provided as a command-line argument
-audio_file_path = sys.argv[1]
-audio_input, sample_rate = sf.read(audio_file_path)
+# Normalize the transcription
+normalized_transcription = normalizer({"sentence": transcription})["sentence"]
 
-# Process the audio input
-result = pipe(audio_input)
-transcription = result["text"]
-print(transcription)
+# Calculate WER after normalizing
+wer_score_after = calculate_wer(ground_truth, normalized_transcription)
 
-# Save the transcription result to a JSON file
-output = {
-    "transcription": transcription,
-    # Placeholder values for WER calculations
-    "werBeforeNormalization": None,
-    "normalizedTranscription": None,
-    "werAfterNormalization": None
+output_data = {
+    'transcription': transcription,
+    'werBeforeNormalization': wer_score_before,
+    'normalizedTranscription': normalized_transcription,
+    'werAfterNormalization': wer_score_after
 }
-with open("result.json", "w") as f:
-    json.dump(output, f, ensure_ascii=False, indent=4)
+
+# Write JSON output to a file
+with open('result.json', 'w', encoding='utf-8') as f:
+    json.dump(output_data, f, ensure_ascii=False, indent=4)
+
+# Read and print the JSON output
+with open('result.json', 'r', encoding='utf-8') as f:
+    json_output = f.read()
+
+print(json_output)
