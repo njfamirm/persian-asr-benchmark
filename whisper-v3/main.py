@@ -39,6 +39,10 @@ pipe = pipeline(
 dataset = load_dataset("distil-whisper/librispeech_long", "clean", split="validation")
 sample = dataset[0]["audio"]
 
+# Use the trimmed audio file with the pipeline
+result = pipe("trimmed_audio.wav")
+print(result["text"])
+
 # Prepare the output data
 output_data = {
     "text": result["text"]
