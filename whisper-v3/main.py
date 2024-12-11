@@ -1,6 +1,16 @@
 import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 from datasets import load_dataset
+from pydub import AudioSegment
+
+# Load the audio file
+audio = AudioSegment.from_wav('../assets/audio-01.wav')
+
+# Trim the audio to the first 29 seconds
+audio_29s = audio[:29 * 1000]  # pydub works in milliseconds
+
+# Export the trimmed audio to a temporary file
+audio_29s.export("trimmed_audio.wav", format="wav")
 
 audio_path = '../assets/audio-01.wav'
 ground_truth_path = '../assets/audio-01.txt'
@@ -29,5 +39,6 @@ pipe = pipeline(
 dataset = load_dataset("distil-whisper/librispeech_long", "clean", split="validation")
 sample = dataset[0]["audio"]
 
-result = pipe(audio_path)
+# Use the trimmed audio file with the pipeline
+result = pipe("trimmed_audio.wav")
 print(result["text"])
