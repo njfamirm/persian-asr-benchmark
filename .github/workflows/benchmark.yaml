@@ -44,7 +44,7 @@ jobs:
                   sudo apt-get update
 
             - name: Upgrade pip
-              run: python3 -m pip install --upgrade pip3
+              run: python3 -m pip install --upgrade pip
 
             - name: Install dependencies
               run: pip3 install -r ${{ matrix.path }}/requirements.txt
