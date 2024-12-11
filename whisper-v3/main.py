@@ -2,6 +2,8 @@ import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 from datasets import load_dataset
 
+audio_path = '../assets/audio-01.wav'
+ground_truth_path = '../assets/audio-01.txt'
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
@@ -27,5 +29,5 @@ pipe = pipeline(
 dataset = load_dataset("distil-whisper/librispeech_long", "clean", split="validation")
 sample = dataset[0]["audio"]
 
-result = pipe()
+result = pipe(audio_path)
 print(result["text"])
