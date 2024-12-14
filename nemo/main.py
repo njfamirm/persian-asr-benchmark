@@ -19,7 +19,7 @@ wer_score = calculate_wer(ground_truth, transcription)
 
 output_data = {
     'transcription': transcription,
-    'werAfterNormalization': wer_score,
+    'werBeforeNormalization': wer_score,
     'normalizedTranscription': transcription,
     'werAfterNormalization': wer_score
 }
