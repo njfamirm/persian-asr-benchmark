@@ -48,13 +48,13 @@ print(result["text"])
 output_data = {
     "text": result["text"]
 }
-print(output_data)
 
 # Write JSON output to a file
 with open('result.json', 'w', encoding='utf-8') as f:
-    json.dump(output_data, f, ensure_ascii=False, indent=4)
+    json.dump({"text": result["text"]}, f, ensure_ascii=False, indent=4)
 
 # Read and print the JSON output
 with open('result.json', 'r', encoding='utf-8') as f:
     json_output = f.read()
-    print(json_output)
+
+print(json_output)
