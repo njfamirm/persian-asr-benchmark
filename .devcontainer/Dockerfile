@@ -5,4 +5,4 @@ RUN apt-get update && \
     apt-get install -y ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python -m pip install --upgrade pip pipreqs transformers datasets[audio] accelerate
+RUN python -m pip install --upgrade pip pipreqs
