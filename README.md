@@ -6,4 +6,4 @@ An research for compare the performance of different ASR models on Persian langu
 
 ## TODO:
 
-- See (Nvidia nemo normalizing)[https://huggingface.co/nvidia/stt_fa_fastconformer_hybrid_large#datasets]
+- See [Nvidia nemo normalizing](https://huggingface.co/nvidia/stt_fa_fastconformer_hybrid_large#datasets)
