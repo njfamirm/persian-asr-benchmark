@@ -10,5 +10,5 @@ def load_model():
     return asr_model
 
 def predict(asr_model, audio_path):
-    transcription = asr_model.transcribe([audio_path])[0]
+    transcription = asr_model.transcribe([audio_path])[0][0]
     return transcription
