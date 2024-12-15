@@ -3,13 +3,13 @@
 name: Run ASR model benchmark
 
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 
-    pull_request:
+  pull_request:
 
-    push:
-        branches:
-            - next
+  push:
+    branches:
+      - next
 
 jobs:
   benchmark:
@@ -22,44 +22,44 @@ jobs:
           - path: whisper-v3
 
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
+          - name: Checkout repository
+            uses: actions/checkout@v4
 
-            - name: Set up Python
-              uses: actions/setup-python@v5
-              with:
-                  python-version: "3.12"
+          - name: Set up Python
+            uses: actions/setup-python@v5
+            with:
+              python-version: "3.12"
 
-            - name: Cache pip
-              uses: actions/cache@v4
-              with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/setup.py') }}
-                  restore-keys: |
-                      ${{ runner.os }}-pip-
+          - name: Cache pip
+            uses: actions/cache@v4
+            with:
+              path: ~/.cache/pip
+              key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/setup.py') }}
+              restore-keys: |
+                ${{ runner.os }}-pip-
 
-            - name: Install ffmpeg
-              run: |
-                  sudo apt-get install -y ffmpeg
+          - name: Install ffmpeg
+            run: |
+              sudo apt-get install -y ffmpeg
 
-            - name: Upgrade pip
-              run: python3 -m pip install --upgrade pip
+          - name: Upgrade pip
+            run: python3 -m pip install --upgrade pip
 
-            - name: Install dependencies
-              run: pip3 install -r ${{ matrix.path }}/requirements.txt
+          - name: Install dependencies
+            run: pip3 install -r ${{ matrix.path }}/requirements.txt
 
-            - name: Run Python script to transcript and generate report
-              id: benchmark_run
-              run: |
-                  cd ${{ matrix.path }}
-                  python main.py
+          - name: Run Python script to transcript and generate report
+            id: benchmark_run
+            run: |
+              cd ${{ matrix.path }}
+              python main.py
 
-            - name: Generate comment
-              run: |
-                  cd ${{ matrix.path }}
-                  report=$(cat result.json | jq -r '[.transcription, .werBeforeNormalization, .normalizedTranscription, .werAfterNormalization] | @csv')
+          - name: Generate comment
+            run: |
+              cd ${{ matrix.path }}
+              report=$(cat result.json | jq -r '[.transcription, .werBeforeNormalization, .normalizedTranscription, .werAfterNormalization] | @csv')
 
-                  echo "## ASR Benchmark Report for ${{ matrix.path }}" >> $GITHUB_STEP_SUMMARY
-                  echo "| Transcription | WER Before Normalization | Normalized Transcription | WER After Normalization |" >> $GITHUB_STEP_SUMMARY
-                  echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-                  echo "$report" | awk -F, '{print "| " $1 " | " $2 " | " $3 " | " $4 " |"}' >> $GITHUB_STEP_SUMMARY
+              echo "## ASR Benchmark Report for ${{ matrix.path }}" >> $GITHUB_STEP_SUMMARY
+              echo "| Transcription | WER Before Normalization | Normalized Transcription | WER After Normalization |" >> $GITHUB_STEP_SUMMARY
+              echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+              echo "$report" | awk -F, '{print "| " $1 " | " $2 " | " $3 " | " $4 " |"}' >> $GITHUB_STEP_SUMMARY
