@@ -23,7 +23,6 @@ def predict(processor, model, audio_path):
         torch_dtype=torch_dtype,
         device=device,
         return_timestamps=True,
-        language="fa"
     )
 
     result = pipe(audio_path)
