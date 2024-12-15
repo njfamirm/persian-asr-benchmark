@@ -19,7 +19,7 @@ jobs:
         include:
           - path: wav2vec2-large-xlsr-persian-v3
           - path: nemo
-          - path: whisper-v3
+          - path: whisper-large-v3
 
         steps:
             - name: Checkout repository
