@@ -1,4 +1,3 @@
-
 from speechbrain.inference.ASR import WhisperASR
 
 def load_model():
