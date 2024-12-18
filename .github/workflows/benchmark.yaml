@@ -54,9 +54,9 @@ jobs:
       - name: Generate comment
         run: |
           cd ${{ matrix.path }}
-          report=$(cat result.json | jq -r '[.transcription, .werBeforeNormalization, .normalizedTranscription, .werAfterNormalization] | @csv')
+          report=$(cat result.json | jq -r '[.transcription, .wer] | @csv')
 
           echo "## ASR Benchmark Report for ${{ matrix.path }}" >> $GITHUB_STEP_SUMMARY
-          echo "| Transcription | WER Before Normalization | Normalized Transcription | WER After Normalization |" >> $GITHUB_STEP_SUMMARY
-          echo "|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-          echo "$report" | awk -F, '{print "| " $1 " | " $2 " | " $3 " | " $4 " |"}' >> $GITHUB_STEP_SUMMARY
+          echo "| Transcription | WER |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "$report" | awk -F, '{print "| " $1 " | " $2 " |"}' >> $GITHUB_STEP_SUMMARY
