@@ -19,9 +19,7 @@ wer_score = calculate_wer(ground_truth, transcription)
 
 output_data = {
     'transcription': transcription,
-    'werBeforeNormalization': wer_score,
-    'normalizedTranscription': transcription,
-    'werAfterNormalization': wer_score
+    'wer': wer_score,
 }
 
 # Write JSON output to a file

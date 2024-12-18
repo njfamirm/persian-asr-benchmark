@@ -3,7 +3,6 @@ import json
 from io import StringIO
 from predict import load_model, predict
 from metrics import calculate_wer
-from normalizer import normalizer
 
 processor, model = load_model()
 
@@ -19,17 +18,9 @@ transcription = predict(processor, model, audio_path)
 # Calculate WER before normalizing
 wer_score_before = calculate_wer(ground_truth, transcription)
 
-# Normalize the transcription
-normalized_transcription = normalizer({"sentence": transcription})["sentence"]
-
-# Calculate WER after normalizing
-wer_score_after = calculate_wer(ground_truth, normalized_transcription)
-
 output_data = {
     'transcription': transcription,
-    'werBeforeNormalization': wer_score_before,
-    'normalizedTranscription': normalized_transcription,
-    'werAfterNormalization': wer_score_after
+    'wer': wer_score_before,
 }
 
 # Write JSON output to a file
