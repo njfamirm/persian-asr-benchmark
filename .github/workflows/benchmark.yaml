@@ -20,6 +20,7 @@ jobs:
           - path: wav2vec2-large-xlsr-persian-v3
           - path: nemo
           - path: whisper-large-v3
+          - path: facebook-wav2vec2-xls-r-300m
 
     steps:
       - name: Checkout repository
